@@ -1,0 +1,64 @@
+<!--{% extends "base.html" %}-->
+
+<!--{% block content %}-->
+<!--<h1>Редактировать комментарий</h1>-->
+
+<!--<form method="post">-->
+<!--  <div style="margin-top: 10px;">-->
+<!--    <label>Имя</label><br>-->
+<!--    <input-->
+<!--      type="text"-->
+<!--      name="first_name"-->
+<!--      maxlength="32"-->
+<!--      value="{{ comment.first_name or '' }}"-->
+<!--    />-->
+<!--  </div>-->
+
+<!--  <div style="margin-top: 10px;">-->
+<!--    <label>Фамилия</label><br>-->
+<!--    <input-->
+<!--      type="text"-->
+<!--      name="last_name"-->
+<!--      maxlength="64"-->
+<!--      value="{{ comment.last_name or '' }}"-->
+<!--    />-->
+<!--  </div>-->
+
+<!--  <div style="margin-top: 10px;">-->
+<!--    <label>Телефон</label><br>-->
+<!--    <input-->
+<!--      type="number"-->
+<!--      name="phone"-->
+<!--      required-->
+<!--      value="{{ comment.phone if comment.phone is not none else '' }}"-->
+<!--    />-->
+<!--  </div>-->
+
+<!--  <div style="margin-top: 10px;">-->
+<!--    <label>Заголовок</label><br>-->
+<!--    <input-->
+<!--      type="text"-->
+<!--      name="title"-->
+<!--      maxlength="128"-->
+<!--      required-->
+<!--      value="{{ comment.title }}"-->
+<!--    />-->
+<!--  </div>-->
+
+<!--  <div style="margin-top: 10px;">-->
+<!--    <label>Текст</label><br>-->
+<!--    <textarea-->
+<!--      name="description"-->
+<!--      maxlength="1024"-->
+<!--      rows="6"-->
+<!--      required-->
+<!--    >{{ comment.description }}</textarea>-->
+<!--  </div>-->
+
+<!--  <div style="margin-top: 14px;">-->
+<!--    <button type="submit">Сохранить</button>-->
+<!--    &nbsp;-->
+<!--    <a href="{{ root }}/user_forms/forms/{{ comment.user_form_id }}/comments/{{ comment.id }}">Отмена</a>-->
+<!--  </div>-->
+<!--</form>-->
+<!--{% endblock %}-->

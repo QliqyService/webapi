@@ -1,0 +1,81 @@
+name: qliqy
+
+networks:
+  qliqy-network:
+    name: qliqy-network
+    external: true
+  traefik-network:
+    name: traefik-network
+    external: true
+
+x-logging: &formatted-logging
+  driver: json-file
+  options:
+    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+    max-size: "10m"
+    max-file: "3"
+    mode: "non-blocking"
+    max-buffer-size: "4m"
+
+x-webap-envs: &webapi-envs
+  APP_STAND: ${APP_STAND:-dev}
+  APP_DEBUG: ${APP_DEBUG:-true}
+  APP_HOST: ${APP_HOST:-0.0.0.0}
+  APP_PORT: ${APP_PORT:-8000}
+  APP_PUBLIC_PATH: ${APP_PUBLIC_PATH:-}
+  APP_SECRET_KEY: ${APP_SECRET_KEY:-supersecret}
+
+x-postgres-envs: &postgres-envs
+  POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+  POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  POSTGRES_USER: ${POSTGRES_USER:-qliqy}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-qliqy-password}
+  POSTGRES_DB: ${POSTGRES_DB:-qliqy_webapi}
+
+x-rabbitmq-envs: &rabbitmq-envs
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+  RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+  RABBITMQ_USER: ${RABBITMQ_USER:-qliqy}
+  RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-qliqy-password}
+
+x-redis-envs: &redis-envs
+  REDIS_HOST: ${REDIS_HOST:-redis}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+
+services:
+
+  qliqy-webapi:
+    container_name: qliqy-webapi
+    image: qliqy-webapi
+    restart: always
+    logging: *formatted-logging
+    networks: [qliqy-network, traefik-network]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8000${APP_PUBLIC_PATH:-}/api/v1/shared/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    build:
+      context: ..
+      dockerfile: .deployment/Dockerfile
+    entrypoint: ["poe", "start-prod"]
+    environment:
+      <<: [
+        *webapi-envs,
+        *postgres-envs,
+        *redis-envs,
+        *rabbitmq-envs,
+      ]
+    ports:
+      - "8001:8000"
+  postgres:
+    container_name: qliqy-postgres
+    image: postgres:16
+    restart: always
+    networks: [ qliqy-network ]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-qliqy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-qliqy-password}
+      POSTGRES_DB: ${POSTGRES_DB:-qliqy_webapi}
+    ports:
+      - "5432:5432"

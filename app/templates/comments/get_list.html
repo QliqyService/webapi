@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Комментарии</h1>
+
+{% if comments and comments|length > 0 %}
+  <ul style="padding-left: 18px;">
+    {% for c in comments %}
+      <li style="margin-bottom: 12px;">
+        <div><strong>{{ c.title }}</strong></div>
+        <div style="opacity: 0.8;">{{ c.description }}</div>
+
+        <div style="opacity: 0.7; font-size: 14px; margin-top: 4px;">
+          {% if c.first_name %}{{ c.first_name }}{% endif %}
+          {% if c.last_name %} {{ c.last_name }}{% endif %}
+          {% if c.phone %} · {{ c.phone }}{% endif %}
+        </div>
+
+        <div style="margin-top: 6px;">
+          <a href="{{ root }}/user_forms/forms/{{ c.user_form_id }}/comments/{{ c.id }}">Открыть</a>
+          &nbsp;|&nbsp;
+          <a href="{{ root }}/user_forms/forms/{{ c.user_form_id }}/comments/{{ c.id }}/edit">Редактировать</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% endblock %}
