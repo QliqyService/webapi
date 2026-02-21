@@ -1,56 +1,60 @@
-name: Build & Publish webapi image
+name: Build Image
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ dev, main ]
-    paths:
-      - "app/**"
-      - ".deployment/**"
-      - "pyproject.toml"
-      - "uv.lock"
-      - ".github/actions/**"
-      - ".github/workflows/webapi-build.yml"
-  workflow_dispatch: {}
+    branches: [ main, test, dev ]
+
+env:
+  DEV_IMAGE_TAG: latest
+  TEST_IMAGE_TAG: rc
+  MAIN_IMAGE_TAG: stable
 
 jobs:
-  build-webapi:
+  build:
+    name: Build & push image
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Checkout repository
+      - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Prepare image tags
-        id: meta
-        shell: bash
-        run: |
-          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
-            BRANCH_BASED_TAG="stable"
-          else
-            BRANCH_BASED_TAG="latest"
-          fi
-          echo "BRANCH_BASED_TAG=${BRANCH_BASED_TAG}" >> "$GITHUB_OUTPUT"
-
-          IMAGE_DATE_TAG="$(date -u +'%Y.%m.%d')"
-          echo "IMAGE_DATE_TAG=${IMAGE_DATE_TAG}" >> "$GITHUB_OUTPUT"
-
-          IMAGE_TAG="${IMAGE_DATE_TAG}-${BRANCH_BASED_TAG}"
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
-
-          echo "COMMIT_TAG=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
-
-      - name: Build & push webapi image
-        uses: ./.github/actions/build
+      - name: Checkout deployment action
+        uses: actions/checkout@v4
         with:
-          image: ghcr.io/qliqy/webapi
-          branch-based-tag: ${{ steps.meta.outputs.BRANCH_BASED_TAG }}
-          image-date-tag: ${{ steps.meta.outputs.IMAGE_DATE_TAG }}
-          image-tag: ${{ steps.meta.outputs.IMAGE_TAG }}
-          commit-tag: ${{ steps.meta.outputs.COMMIT_TAG }}
+          repository: gen2b/deployment
+          ref: main
+          token: ${{ secrets.GHCR_TOKEN }}
+          path: _deployment
+
+      - name: Get image repository path
+        shell: bash
+        run: echo "IMAGE_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
+      - name: Get current timestamp
+        id: date
+        run: echo "TIMESTAMP_TAG=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+
+      - name: Set branch-based environment variables
+        uses: iamtheyammer/branch-env-vars@v1.2.2
+        with:
+          IMAGE_TAG: |
+            main:${{ env.MAIN_IMAGE_TAG }}
+            test:${{ env.TEST_IMAGE_TAG }}
+            dev:${{ env.DEV_IMAGE_TAG }}
+
+      - name: Build image
+        uses: "./_deployment/.github/actions/build"
+        with:
+          image: ${{ env.IMAGE_REPO }}
+          image-tag: ${{ env.IMAGE_TAG }}
+          commit-tag: ${{ github.sha }}
+          image-timestamp-tag: ${{ env.TIMESTAMP_TAG }}-${{ env.IMAGE_TAG }}
           context: .
           dockerfile: .deployment/Dockerfile
-          build-args: ""
-          registry-password: ${{ secrets.GITHUB_TOKEN }}
+          registry-password: ${{ secrets.GHCR_TOKEN }}
+          build-args: |
+            APP_RELEASE=${{ env.TIMESTAMP_TAG }}-${{ env.IMAGE_TAG }}
