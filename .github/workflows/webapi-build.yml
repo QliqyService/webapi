@@ -45,7 +45,7 @@ jobs:
       - name: Build & push webapi image
         uses: ./.github/actions/build
         with:
-          image: ghcr.io/${{ github.repository_owner }}/webapi
+          image: ghcr.io/qliqyservice/webapi
           branch-based-tag: ${{ steps.meta.outputs.BRANCH_BASED_TAG }}
           image-date-tag: ${{ steps.meta.outputs.IMAGE_DATE_TAG }}
           image-tag: ${{ steps.meta.outputs.IMAGE_TAG }}
