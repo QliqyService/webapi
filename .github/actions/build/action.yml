@@ -1,7 +1,9 @@
 name: Build
 description: Builds image and pushes to the repository
 inputs:
-  image: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
+  image:
+    description: Image name (full repo path, e.g. ghcr.io/org/app)
+    required: true
 
   branch-based-tag:
     description: Branch based tag (dev=latest, main=stable)
