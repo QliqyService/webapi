@@ -1,76 +1,56 @@
-name: Build Image
+name: Build & Publish webapi image
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ main, test, dev ]
-
-env:
-  DEV_IMAGE_TAG: latest
-  TEST_IMAGE_TAG: rc
-  MAIN_IMAGE_TAG: stable
-
-  HEALTH_PORT: "8000"
-  HEALTH_URL: "http://127.0.0.1:8000/healthcheck"
+    branches: [ dev, main ]
+    paths:
+      - "app/**"
+      - ".deployment/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/actions/**"
+      - ".github/workflows/webapi-build.yml"
+  workflow_dispatch: {}
 
 jobs:
-  build:
+  build-webapi:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Compute image repo (lowercase)
+      - name: Prepare image tags
+        id: meta
         shell: bash
         run: |
-          echo "IMAGE_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            BRANCH_BASED_TAG="stable"
+          else
+            BRANCH_BASED_TAG="latest"
+          fi
+          echo "BRANCH_BASED_TAG=${BRANCH_BASED_TAG}" >> "$GITHUB_OUTPUT"
 
-      - name: Compute tags
-        shell: bash
-        run: |
-          echo "TIMESTAMP_TAG=$(date -u +'%Y.%m.%d')" >> $GITHUB_ENV
-          echo "COMMIT_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          IMAGE_DATE_TAG="$(date -u +'%Y.%m.%d')"
+          echo "IMAGE_DATE_TAG=${IMAGE_DATE_TAG}" >> "$GITHUB_OUTPUT"
 
-      - name: Set branch tag
-        uses: iamtheyammer/branch-env-vars@v1.2.2
+          IMAGE_TAG="${IMAGE_DATE_TAG}-${BRANCH_BASED_TAG}"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+
+          echo "COMMIT_TAG=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build & push webapi image
+        uses: ./.github/actions/build
         with:
-          IMAGE_TAG: |
-            main:${{ env.MAIN_IMAGE_TAG }}
-            test:${{ env.TEST_IMAGE_TAG }}
-            dev:${{ env.DEV_IMAGE_TAG }}
-
-      - name: Build image locally
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: .deployment/Dockerfile
-          load: true
-          tags: |
-            local/webapi:ci
-          build-args: |
-            APP_RELEASE=${{ env.TIMESTAMP_TAG }}-${{ env.IMAGE_TAG }}
-
-      - name: Verify service
-        uses: ./.github/actions/verify
-        with:
-          image: local/webapi:ci
-          port: "8000"
-          container-name: webapi-ci
-          wait-seconds: "20"
-          health-url: ''
-
-      - name: Push image to GHCR
-        uses: QliqyService/deployment/.deployment/.github/actions/build@main
-        with:
-          image: ${{ env.IMAGE_REPO }}
-          image-tag: ${{ env.IMAGE_TAG }}
-          commit-tag: ${{ env.COMMIT_TAG }}
-          image-timestamp-tag: ${{ env.TIMESTAMP_TAG }}-${{ env.IMAGE_TAG }}
+          image: ghcr.io/qliqyservice/webapi:latest
+          branch-based-tag: ${{ steps.meta.outputs.BRANCH_BASED_TAG }}
+          image-date-tag: ${{ steps.meta.outputs.IMAGE_DATE_TAG }}
+          image-tag: ${{ steps.meta.outputs.IMAGE_TAG }}
+          commit-tag: ${{ steps.meta.outputs.COMMIT_TAG }}
           context: .
           dockerfile: .deployment/Dockerfile
+          build-args: ""
           registry-password: ${{ secrets.GITHUB_TOKEN }}
-          build-args: |
-            APP_RELEASE=${{ env.TIMESTAMP_TAG }}-${{ env.IMAGE_TAG }}
