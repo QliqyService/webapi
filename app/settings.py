@@ -52,17 +52,7 @@ Responses include standard HTTP response codes (`200`, `201`, `202`, `204`, `400
 
 > NOTE: The {APP_TITLE} API is still in development mode. While stability and compatibility will be carefully maintained as much as possible, changes will likely be introduced without notice.
 However, breaking changes will always be introduced with a version change and/or prior communication from the support team. Please reach out to your point of contact at {APP_TITLE} to provide feedback.
-
-
-| Страница    | Метод | URL                                | Описание                 |
-| ----------- | ----- |------------------------------------| ------------------------ |
-| Login       | GET   | `api/pages/login`                  | Страница входа           |
-| Forms list  | GET   | `api/pages/forms`                  | Список форм пользователя |
-| Create form | GET   | `api/pages/create`                 | Создание новой формы     |
-| Edit form   | GET   | `api/pages/form_id/edit`         | Редактирование формы     |
-| Logout      | POST  | `api/pages/logout`                 | Выход из системы         |
-| Delete form | POST  | `api/pages/forms/form_id/delete` | Удаление формы           |
-"""  # noqa: E501
+"""
 
     APP_DEBUG: bool = False
     APP_PUBLIC_PATH: str | None = None
@@ -74,7 +64,7 @@ However, breaking changes will always be introduced with a version change and/or
     AUTH_BACKEND_URL: str = "https://app.qliqy.io/auth"
     AUTH_SECRET_KEY: str = "key"
     AUTH_PASSWORD_ALGORYTHM: str = "HS256"
-    AUTH_LOGIN_URL: str = "api/v1/auth/login"
+    AUTH_LOGIN_URL: str = "v1/auth/login"
     AUTH_ACCESS_TOKEN_EXPIRE_SECONDS: int = 60 * 60 * 24 * 7 * 2  # 2 weeks
 
     # Common

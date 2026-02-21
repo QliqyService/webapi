@@ -20,11 +20,10 @@ class Application(FastAPI):
         super().__init__(
             title=self.settings.APP_TITLE,
             description=self.settings.APP_DESCRIPTION,
-            root_path=self.settings.APP_PUBLIC_PATH,
             root_path_in_servers=True,
-            docs_url="/",
-            openapi_url="/openapi.json",
-            redoc_url="/v1/docs",
+            docs_url="/api/docs",
+            openapi_url = "/api/openapi.json",
+            redoc_url = "/api/redoc",
             version=self.settings.APP_RELEASE,
         )
         self.run_startup_actions()
