@@ -12,33 +12,23 @@ env:
 
 jobs:
   build:
-    name: Build & push image
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-
-      - name: Checkout deployment action
-        uses: actions/checkout@v4
-        with:
-          repository: gen2b/deployment
-          ref: main
-          token: ${{ secrets.GHCR_TOKEN }}
-          path: _deployment
+      - uses: actions/checkout@v4
 
       - name: Get image repository path
         shell: bash
         run: echo "IMAGE_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
-      - name: Get current timestamp
-        id: date
-        run: echo "TIMESTAMP_TAG=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+      - name: Get timestamp
+        shell: bash
+        run: echo "TIMESTAMP_TAG=$(date -u +'%Y.%m.%d')" >> $GITHUB_ENV
 
-      - name: Set branch-based environment variables
+      - name: Set branch tag
         uses: iamtheyammer/branch-env-vars@v1.2.2
         with:
           IMAGE_TAG: |
@@ -47,7 +37,7 @@ jobs:
             dev:${{ env.DEV_IMAGE_TAG }}
 
       - name: Build image
-        uses: "./_deployment/.github/actions/build"
+        uses: QliqyService/deployment/.github/actions/build@main
         with:
           image: ${{ env.IMAGE_REPO }}
           image-tag: ${{ env.IMAGE_TAG }}
@@ -55,6 +45,6 @@ jobs:
           image-timestamp-tag: ${{ env.TIMESTAMP_TAG }}-${{ env.IMAGE_TAG }}
           context: .
           dockerfile: .deployment/Dockerfile
-          registry-password: ${{ secrets.GHCR_TOKEN }}
+          registry-password: ${{ secrets.GITHUB_TOKEN }}
           build-args: |
             APP_RELEASE=${{ env.TIMESTAMP_TAG }}-${{ env.IMAGE_TAG }}
