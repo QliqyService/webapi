@@ -1,0 +1,39 @@
+name: Verify container health
+description: Runs a container and checks a health URL
+inputs:
+  image:
+    required: true
+  port:
+    required: true
+  health-url:
+    required: true
+  container-name:
+    required: false
+    default: svc-ci
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+        NAME="${{ inputs.container-name }}"
+        docker rm -f "$NAME" >/dev/null 2>&1 || true
+        docker run -d --rm --name "$NAME" -p "${{ inputs.port }}:${{ inputs.port }}" "${{ inputs.image }}"
+
+    - shell: bash
+      run: |
+        set -euo pipefail
+        NAME="${{ inputs.container-name }}"
+        for i in {1..45}; do
+          if curl -fsS "${{ inputs.health-url }}" >/dev/null; then
+            echo "Healthcheck OK"
+            docker rm -f "$NAME" >/dev/null 2>&1 || true
+            exit 0
+          fi
+          sleep 2
+        done
+        echo "Healthcheck FAILED"
+        docker logs "$NAME" || true
+        docker rm -f "$NAME" >/dev/null 2>&1 || true
+        exit 1
