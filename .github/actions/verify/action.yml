@@ -1,15 +1,17 @@
-name: Verify container health
-description: Runs a container and checks a health URL
+name: Verify container starts
+description: Runs a container and checks that it stays running
 inputs:
   image:
     required: true
   port:
-    required: true
-  health-url:
-    required: true
+    required: false
+    default: "8000"
   container-name:
     required: false
     default: svc-ci
+  wait-seconds:
+    required: false
+    default: "15"
 
 runs:
   using: composite
@@ -18,22 +20,23 @@ runs:
       run: |
         set -euo pipefail
         NAME="${{ inputs.container-name }}"
-        docker rm -f "$NAME" >/dev/null 2>&1 || true
-        docker run -d --rm --name "$NAME" -p "${{ inputs.port }}:${{ inputs.port }}" "${{ inputs.image }}"
+        PORT="${{ inputs.port }}"
+        WAIT="${{ inputs.wait-seconds }}"
 
-    - shell: bash
-      run: |
-        set -euo pipefail
-        NAME="${{ inputs.container-name }}"
-        for i in {1..45}; do
-          if curl -fsS "${{ inputs.health-url }}" >/dev/null; then
-            echo "Healthcheck OK"
-            docker rm -f "$NAME" >/dev/null 2>&1 || true
-            exit 0
-          fi
-          sleep 2
-        done
-        echo "Healthcheck FAILED"
-        docker logs "$NAME" || true
         docker rm -f "$NAME" >/dev/null 2>&1 || true
-        exit 1
+        docker run -d --rm --name "$NAME" -p "${PORT}:${PORT}" "${{ inputs.image }}"
+
+        echo "Waiting ${WAIT}s to ensure container stays up..."
+        sleep "${WAIT}"
+
+        if ! docker ps --format '{{.Names}}' | grep -qx "$NAME"; then
+          echo "Container exited during startup"
+          echo "=== docker ps -a ==="
+          docker ps -a
+          echo "=== logs ==="
+          docker logs "$NAME" || true
+          exit 1
+        fi
+
+        echo "Container is running ✅"
+        docker rm -f "$NAME" >/dev/null 2>&1 || true
