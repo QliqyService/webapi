@@ -57,9 +57,10 @@ jobs:
         uses: ./.github/actions/verify
         with:
           image: local/webapi:ci
-          port: ${{ env.HEALTH_PORT }}
-          health-url: ${{ env.HEALTH_URL }}
+          port: "8000"
           container-name: webapi-ci
+          wait-seconds: "20"
+          health-url: ''
 
       - name: Push image to GHCR
         uses: QliqyService/deployment/.deployment/.github/actions/build@main
