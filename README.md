@@ -23,3 +23,7 @@ Client Interface – where a user creates QR codes (links) to contact forms, con
 Contact Forms – where users without authorization fill in the required information defined during form creation and submit a message directly to the form creator.
 
 ---
+
+REDOC - https://qliqy.org/api/redoc
+OPENAPI - https://qliqy.org/api/openapi.json
+DOCS - https://qliqy.org/api/docs

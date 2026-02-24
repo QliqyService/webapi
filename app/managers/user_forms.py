@@ -24,21 +24,10 @@ class UserFormManager:
 
     @staticmethod
     async def create_form(
-        user_id: UUID,
-        data: UserFormCreateSchema,
+            user_id: UUID,
+            data: UserFormCreateSchema,
     ) -> UserFormSchemaWithoutQrcode:
         created_form = await UserFormsDb().create(user_id=user_id, form=data)
-
-        if SETTINGS.FORMS_PUBLIC_BASE_URL:
-            form_url = f"{SETTINGS.FORMS_PUBLIC_BASE_URL}/{created_form.id}"
-            try:
-                qr_png = await qr_client.generate_png(form_url)
-                await UserFormsDb().set_qrcode(form_id=created_form.id, qrcode=qr_png)
-            except Exception as e:
-                LOGGER.exception("QR-code generation failed")
-                raise QRCodeGenerationException(meta=str(e)) from e
-
-            return created_form
 
         public_url = f"{SETTINGS.FORMS_PUBLIC_LOCAL_URL}/{created_form.id}"
 
@@ -60,6 +49,7 @@ class UserFormManager:
 
             response_data = QRRPCResponse.model_validate_json(rpc_response.body)
             qrcode_bytes = base64.b64decode(response_data.body)
+
             await UserFormsDb().set_qrcode(
                 form_id=created_form.id,
                 qrcode=qrcode_bytes,
