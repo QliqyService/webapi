@@ -41,7 +41,7 @@ class Application(FastAPI):
         self.include_router(api_router)
         self.include_router(pages_router)
         self.include_router(account_linking_router)
-        self.include_router(public_router, prefix="/public")
+        self.include_router(public_router, prefix="/public", tags=["Public"])
         LOGGER.debug("[MAIN] Routers added")
 
     def add_middlewares(self) -> None:
