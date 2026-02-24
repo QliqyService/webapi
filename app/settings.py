@@ -83,6 +83,7 @@ However, breaking changes will always be introduced with a version change and/or
     QRCODE_SERVICE_URL: str = "http://qrcode-generator:8000"
     FORMS_PUBLIC_BASE_URL: str | None = None
     FORMS_PUBLIC_LOCAL_URL: str = "http://localhost:8000/qliqy/public/forms"
+    FORMS_PUBLIC_DOMAIN_URL: str = "https://qliqy.org/public"
     PAGES_PREFIX: str = "qliqy"
 
     @property

@@ -28,7 +28,7 @@ class CommentsManager:
             LOGGER.exception("Failed to load owner for notifications")
             return created
 
-        base = SETTINGS.FORMS_PUBLIC_BASE_URL or SETTINGS.FORMS_PUBLIC_LOCAL_URL
+        base = SETTINGS.FORMS_PUBLIC_DOMAIN_URL
         form_public_url = f"{base}/{form.id}" if base else None
 
         created_at = getattr(created, "created_at", None)
