@@ -29,7 +29,7 @@ class UserFormManager:
     ) -> UserFormSchemaWithoutQrcode:
         created_form = await UserFormsDb().create(user_id=user_id, form=data)
 
-        public_url = f"{SETTINGS.FORMS_PUBLIC_LOCAL_URL}/{created_form.id}"
+        public_url = f"{SETTINGS.FORMS_PUBLIC_DOMAIN_URL}/{created_form.id}"
 
         try:
             queue_name = f"{SETTINGS.APP_STAND}::{ServiceName.QR_CODE}::get_qrcode"
