@@ -90,7 +90,7 @@ async def find_my_code(
 
 async def upload_my_avatar(
     file: UploadFile = File(...),
-    user: ActiveUserDepends = None,
+    user: ActiveUserDepends,
 ):
     """
     Upload avatar for current user.
