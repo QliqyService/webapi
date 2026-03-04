@@ -76,7 +76,8 @@ class UsersManager:
         updated_user_db = await UsersDb.update(user_id=user_id, user_data=user_data)
         return UserSchema.model_validate(updated_user_db)
 
-    async def upload_avatar(user_id: UUID, file: UploadFile) -> dict:
+    @staticmethod
+    async def upload_avatar(*, user_id: UUID, file: UploadFile) -> dict:
         user_db = await UsersDb.get(user_id=user_id)
 
         if not user_db:
