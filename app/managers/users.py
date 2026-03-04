@@ -1,5 +1,4 @@
-from uuid import UUID
-
+from uuid import UUID, uuid4
 from app.db.crud import UsersDb
 from app.dependencies.exceptions import ObjectAlreadyExistsException, RequestedDataNotFoundException
 from app.schemas.users.users import UserSchema, UserUpdateSchema
