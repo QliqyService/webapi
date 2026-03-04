@@ -5,6 +5,8 @@ from app.dependencies.exceptions import ObjectAlreadyExistsException, RequestedD
 from app.schemas.users.users import UserSchema, UserUpdateSchema
 from app.services import Services
 
+from fastapi import UploadFile
+
 
 class UsersManager:
     @staticmethod
