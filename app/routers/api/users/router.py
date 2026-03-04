@@ -8,6 +8,8 @@ from app.schemas.users.users import (
     UserUpdateSchema,
 )
 
+from fastapi import status, UploadFile, File
+
 
 router = Router(
     name="Users",
@@ -81,3 +83,19 @@ async def find_my_code(
     """
     code = await Managers.users.get_me(user_id=user.id)
     return code.usercode
+@router.post(
+    "/me/avatar",
+    status_code=status.HTTP_200_OK,
+)
+
+async def upload_my_avatar(
+    file: UploadFile = File(...),
+    user: ActiveUserDepends = None,
+):
+    """
+    Upload avatar for current user.
+
+    Input: multipart/form-data with field `file`
+    Output: {"avatar_key": "..."}
+    """
+    return await Managers.users.upload_avatar(user_id=user.id, file=file)

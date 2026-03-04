@@ -22,6 +22,7 @@ class User(SQLAlchemyBase, LifeCycleMixin):
     first_name: Mapped[str | None] = mapped_column(sa.String, nullable=True)
     last_name: Mapped[str | None] = mapped_column(sa.String, nullable=True)
     tg_account: Mapped[str | None] = mapped_column(sa.String, nullable=True)
+    avatar_key: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
 
     is_active: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, default=True, index=True)
     is_superuser: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, default=False)

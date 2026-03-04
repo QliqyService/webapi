@@ -85,6 +85,13 @@ However, breaking changes will always be introduced with a version change and/or
     FORMS_PUBLIC_LOCAL_URL: str = "http://localhost:8000/qliqy/public/forms"
     FORMS_PUBLIC_DOMAIN_URL: str = "https://qliqy.org/public"
     PAGES_PREFIX: str = "qliqy"
+    S3_ENDPOINT: str
+    S3_BUCKET: str
+    S3_ACCESS_KEY_ID: str
+    S3_SECRET_ACCESS_KEY: str
+    S3_REGION: str = "us-east-1"
+    S3_FORCE_PATH_STYLE: bool = True
+    S3_PRESIGN_EXPIRES: int = 900
 
     @property
     def POSTGRES_URL(self) -> str:

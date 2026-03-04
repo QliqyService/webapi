@@ -73,3 +73,23 @@ class UsersManager:
 
         updated_user_db = await UsersDb.update(user_id=user_id, user_data=user_data)
         return UserSchema.model_validate(updated_user_db)
+
+    async def upload_avatar(user_id: UUID, file: UploadFile) -> dict:
+        user_db = await UsersDb.get(user_id=user_id)
+
+        if not user_db:
+            raise RequestedDataNotFoundException("User not found")
+
+        ext = (file.filename.split(".")[-1] if file.filename and "." in file.filename else "bin")
+
+        key = f"avatars/{user_id}/{uuid4().hex}.{ext}"
+
+        Services.minio.upload_fileobj(
+            key=key,
+            fileobj=file.file,
+            content_type=file.content_type,
+        )
+
+        await UsersDb.update(user_id=user_id, user_data={"avatar_key": key})
+
+        return {"avatar_key": key}

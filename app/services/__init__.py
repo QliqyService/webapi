@@ -7,6 +7,7 @@ from app.services.postgresql import PostgreSQL
 from app.services.qrcode_client import QRCodeClient
 from app.services.rabbitmq import RabbitMQClient
 from app.settings import SETTINGS
+from app.services.minio import MinioStorageService
 
 
 __all__ = ["Services"]
@@ -35,6 +36,15 @@ class Services:
     )
     qr_client = QRCodeClient(SETTINGS.QRCODE_SERVICE_URL)
     rabbitmq = RabbitMQClient(url=SETTINGS.RABBITMQ_URL)
+    minio = MinioStorageService(
+        endpoint=SETTINGS.S3_ENDPOINT,
+        bucket=SETTINGS.S3_BUCKET,
+        access_key_id=SETTINGS.S3_ACCESS_KEY_ID,
+        secret_access_key=SETTINGS.S3_SECRET_ACCESS_KEY,
+        region=SETTINGS.S3_REGION,
+        force_path_style=SETTINGS.S3_FORCE_PATH_STYLE,
+        presign_expires=SETTINGS.S3_PRESIGN_EXPIRES,
+    )
 
     @classmethod
     def get_external_services(cls) -> list[BaseService]:
