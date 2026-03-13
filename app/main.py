@@ -5,8 +5,8 @@ from starlette.staticfiles import StaticFiles
 
 from app.routers import *
 from app.routers.api.public import router as public_router
-from app.services import Services
 from app.routers.streaming import account_linking_router
+from app.services import Services
 from app.settings import get_settings
 
 

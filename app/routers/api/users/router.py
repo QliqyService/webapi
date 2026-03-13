@@ -1,4 +1,5 @@
-from fastapi import status
+from fastapi import File, UploadFile, status
+from fastapi.responses import StreamingResponse
 
 from app.dependencies.http import AccessTokenDepends, ActiveUserDepends
 from app.managers import Managers
@@ -7,8 +8,6 @@ from app.schemas.users.users import (
     UserSchema,
     UserUpdateSchema,
 )
-
-from fastapi import status, UploadFile, File
 
 
 router = Router(
@@ -99,3 +98,25 @@ async def upload_my_avatar(
     Output: {"avatar_key": "..."}
     """
     return await Managers.users.upload_avatar(user_id=user.id, file=file)
+
+@router.get(
+    "/me/avatar",
+    status_code=status.HTTP_200_OK,
+)
+async def get_my_avatar(
+    user: ActiveUserDepends,
+):
+    avatar = await Managers.users.get_avatar(user_id=user.id)
+
+    return StreamingResponse(
+        avatar["body"],
+        media_type=avatar["content_type"],
+        headers={
+            "Content-Disposition": f'inline; filename="{avatar["filename"]}"',
+            **(
+                {"Content-Length": str(avatar["content_length"])}
+                if avatar["content_length"] is not None
+                else {}
+            ),
+        },
+    )

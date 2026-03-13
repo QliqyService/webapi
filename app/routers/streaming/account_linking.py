@@ -1,10 +1,12 @@
-from faststream.rabbit import RabbitMessage, RabbitRouter, RabbitQueue
-from sqlalchemy import delete, exists, select, update
+from faststream.rabbit import RabbitQueue, RabbitRouter
+from loguru import logger as LOGGER
+from sqlalchemy import update
+
 from app.db.models.users import User
 from app.schemas.account_linking import TGRPCRequest, TGRPCResponse
 from app.services import Services
-from loguru import logger as LOGGER
 from app.settings import SETTINGS
+
 
 webapi_prefix = f"{SETTINGS.APP_STAND}::webapi::"
 router = RabbitRouter(prefix=webapi_prefix)

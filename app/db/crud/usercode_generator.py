@@ -1,6 +1,7 @@
-from datetime import datetime
 import random
 import string
+from datetime import datetime
+
 
 ALPHABET = string.ascii_uppercase + string.digits
 

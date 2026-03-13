@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, BinaryIO
-from uuid import uuid4
+from typing import BinaryIO, Optional
 
 import boto3
 from botocore.config import Config
+
 from app.services.base import BaseService
 
 

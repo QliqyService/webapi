@@ -15,7 +15,6 @@ from app.schemas.user_forms import (
     UserFormUpdateSchema,
 )
 from app.services import Services
-from app.services.qrcode_client import qr_client
 from app.settings import SETTINGS, ServiceName
 
 
