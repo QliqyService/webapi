@@ -92,6 +92,9 @@ class UsersManager:
             content_type=file.content_type,
         )
 
-        await UsersDb.update(user_id=user_id, user_data={"avatar_key": key})
+        await UsersDb.update(
+            user_id=user_id,
+            user_data=UserUpdateSchema(avatar_key=key),
+        )
 
         return {"avatar_key": key}

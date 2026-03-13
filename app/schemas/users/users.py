@@ -18,6 +18,8 @@ class UserSchema(UUIDModel, CreateUpdateAt):
     is_superuser: bool = False
     is_verified: bool = False
     usercode: str | None = Field(examples=["It will be generated"], default=None)
+    avatar_key: str | None = None
+
 
     # ✅ настройки уведомлений
     notify_email_enabled: bool = False
@@ -50,6 +52,7 @@ class UserUpdateSchema(BaseModel):
     first_name: str | None = Field(examples=["John"], default=None, min_length=2, max_length=64)
     last_name: str | None = Field(examples=["Doe"], default=None, min_length=2, max_length=64)
     tg_account: str | None = Field(examples=["@telegram"], default=None)
+    avatar_key: str | None = None
 
     notify_email_enabled: bool | None = None
     notify_email: EmailStr | None = None
