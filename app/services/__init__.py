@@ -3,11 +3,11 @@ import inspect
 from app.services.auth import Authorization
 from app.services.auth_proxy import AuthProxyClient
 from app.services.base import BaseService
+from app.services.minio import MinioStorageService
 from app.services.postgresql import PostgreSQL
 from app.services.qrcode_client import QRCodeClient
 from app.services.rabbitmq import RabbitMQClient
 from app.settings import SETTINGS
-from app.services.minio import MinioStorageService
 
 
 __all__ = ["Services"]

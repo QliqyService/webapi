@@ -1,6 +1,7 @@
 from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field
+
 from app.schemas.base import UUIDModel
 from app.schemas.mixins import CreateUpdateAt
 from app.schemas.validators import make_phone_length_validator, make_strip_validator

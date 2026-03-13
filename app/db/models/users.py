@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db.crud.usercode_generator import generate_usercode
 from app.services.postgresql import LifeCycleMixin, SQLAlchemyBase
 

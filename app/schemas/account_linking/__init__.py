@@ -1,4 +1,4 @@
-from .telegram_account_linking import TGRPCResponse, TGRPCRequest
+from .telegram_account_linking import TGRPCRequest, TGRPCResponse
 
 
 __all__ = ["TGRPCResponse","TGRPCRequest"]

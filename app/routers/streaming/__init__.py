@@ -1,5 +1,6 @@
 from faststream.rabbit.fastapi import RabbitRouter
 from loguru import logger as LOGGER
+
 from app.routers.streaming.account_linking import router
 from app.settings import SETTINGS
 

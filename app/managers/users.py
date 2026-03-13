@@ -1,10 +1,11 @@
 from uuid import UUID, uuid4
+
+from fastapi import UploadFile
+
 from app.db.crud import UsersDb
 from app.dependencies.exceptions import ObjectAlreadyExistsException, RequestedDataNotFoundException
 from app.schemas.users.users import UserSchema, UserUpdateSchema
 from app.services import Services
-
-from fastapi import UploadFile
 
 
 class UsersManager:
@@ -98,3 +99,22 @@ class UsersManager:
         )
 
         return {"avatar_key": key}
+
+    @staticmethod
+    async def get_avatar(*, user_id: UUID):
+        user_db = await UsersDb.get(user_id=user_id)
+
+        if not user_db:
+            raise RequestedDataNotFoundException("User not found")
+
+        if not user_db.avatar_key:
+            raise RequestedDataNotFoundException("Avatar not found")
+
+        body, content_type, content_length = Services.minio.get_object_stream(user_db.avatar_key)
+
+        return {
+            "body": body,
+            "content_type": content_type or "application/octet-stream",
+            "content_length": content_length,
+            "filename": user_db.avatar_key.split("/")[-1],
+    }
