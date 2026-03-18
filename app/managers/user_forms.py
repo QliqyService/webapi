@@ -1,3 +1,4 @@
+import base64
 import uuid
 from uuid import UUID
 
