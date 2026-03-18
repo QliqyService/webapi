@@ -1,4 +1,3 @@
-import base64
 import uuid
 from uuid import UUID
 
@@ -69,23 +68,16 @@ class UserFormManager:
         if form.user_id != user_id:
             raise PermissionDeniedException("You have no access to this form")
 
-        form.qrcode = base64.b64encode(form.qrcode or b"").decode("ascii")
         return form
 
     @staticmethod
     async def get_list(user_id: UUID) -> list[UserFormSchemaWithQrcode]:
-        forms = await UserFormsDb().get_list(user_id=user_id)
-        for f in forms:
-            f.qrcode = base64.b64encode(f.qrcode or b"").decode("ascii")
-        return forms
+        return await UserFormsDb().get_list(user_id=user_id)
 
     # Gets all (even disabled) forms
     @staticmethod
     async def get_all_forms(user_id: UUID) -> list[UserFormSchemaWithQrcode]:
-        forms = await UserFormsDb().get_all_user_forms(user_id=user_id)
-        for f in forms:
-            f.qrcode = base64.b64encode(f.qrcode or b"").decode("ascii")
-        return forms
+        return await UserFormsDb().get_all_user_forms(user_id=user_id)
 
     @staticmethod
     async def update_form(form_id: UUID, user_id: UUID, data: UserFormUpdateSchema) -> UserFormSchemaWithoutQrcode:
@@ -120,7 +112,6 @@ class UserFormManager:
         if not form:
             raise RequestedDataNotFoundException("Form not found")
 
-        form.qrcode = base64.b64encode(form.qrcode or b"").decode("ascii")
         return form
 
     @staticmethod

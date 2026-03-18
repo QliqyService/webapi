@@ -37,14 +37,14 @@ class UserFormsDb(BaseDatabase):
         return UserFormSchemaWithoutQrcode.model_validate(form_db, from_attributes=True)
 
     @staticmethod
-    async def get(form_id: UUID) -> UserFormSchemaWithoutQrcode | None:
+    async def get(form_id: UUID) -> UserFormSchemaWithQrcode | None:
         """Get form by ID.
 
         Args:
             form_id (UUID): form ID
 
         Returns:
-            UserFormSchemaWithoutQrcode | None: form if found and enabled, None otherwise
+            UserFormSchemaWithQrcode | None: form if found and enabled, None otherwise
         """
         query = select(UserForm).where(UserForm.id == form_id, UserForm.is_enabled)
         async with Services.database.session() as session:
@@ -53,7 +53,7 @@ class UserFormsDb(BaseDatabase):
         if not form_db:
             return None
 
-        return UserFormSchemaWithoutQrcode.model_validate(form_db, from_attributes=True)
+        return UserFormSchemaWithQrcode.model_validate(form_db, from_attributes=True)
 
     @staticmethod
     async def update(form_id: UUID, form_data: UserFormUpdateSchema) -> UserFormSchemaWithoutQrcode | None:

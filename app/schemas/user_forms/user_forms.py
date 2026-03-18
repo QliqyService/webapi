@@ -1,6 +1,9 @@
 from uuid import UUID
 
-from pydantic import Field
+import base64
+from typing import Annotated
+
+from pydantic import Field, PlainSerializer
 
 from app.schemas.base import UUIDModel
 from app.schemas.comments import CommentsSchema
@@ -19,12 +22,18 @@ class UserFormSchemaWithoutQrcode(UUIDModel, StripTitleDescriptionMixin, CreateU
     is_enabled: bool = Field(default=True)
 
 
+QRCodeSerialized = Annotated[
+    bytes,
+    PlainSerializer(lambda value: base64.b64encode(value).decode("ascii"), return_type=str, when_used="json"),
+]
+
+
 class UserFormSchemaWithQrcode(UserFormSchemaWithoutQrcode):
     """
     Базовая схема формы пользователя для чтения c qrcode(GET).
     """
 
-    qrcode: bytes | None = None
+    qrcode: QRCodeSerialized | None = None
 
 
 class UserFormCreateSchema(StripTitleDescriptionMixin):
