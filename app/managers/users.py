@@ -52,13 +52,13 @@ class UsersManager:
             raise RequestedDataNotFoundException("User not found")
 
         is_update_email = False
-        if user_db.email != user_data.email:
+        if user_data.email is not None and user_db.email != user_data.email:
             user_email_existing = await UsersDb.exists_by_email(email=user_data.email)
             if user_email_existing:
                 raise ObjectAlreadyExistsException("Email already exists")
             is_update_email = True
 
-        if user_data.phone and user_db.phone != user_data.phone:
+        if user_data.phone is not None and user_db.phone != user_data.phone:
             user_phone_existing = await UsersDb.exists_by_phone(phone=user_data.phone)
             if user_phone_existing:
                 raise ObjectAlreadyExistsException("Phone already exists")
