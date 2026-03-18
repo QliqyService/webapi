@@ -4,7 +4,6 @@ from loguru import logger as LOGGER
 from starlette.staticfiles import StaticFiles
 
 from app.routers import *
-from app.routers.api.public import router as public_router
 from app.routers.streaming import account_linking_router
 from app.services import Services
 from app.settings import get_settings
@@ -40,7 +39,6 @@ class Application(FastAPI):
     def include_routers(self) -> None:
         self.include_router(api_router)
         self.include_router(account_linking_router)
-        self.include_router(public_router, prefix="/public", tags=["Public"])
         LOGGER.debug("[MAIN] Routers added")
 
     def add_middlewares(self) -> None:
