@@ -1,6 +1,7 @@
 from uuid import UUID
 
-from fastapi import status
+from fastapi import Request, status
+from fastapi.responses import HTMLResponse
 from fastapi.responses import StreamingResponse
 
 from app.managers import Managers
@@ -13,6 +14,23 @@ router = Router(
     name="Public Page",
     description="Public endpoints for viewing forms without authentication.",
 )
+
+
+@router.get(
+    "/forms/{form_id}",
+    status_code=status.HTTP_200_OK,
+    response_class=HTMLResponse,
+    include_in_schema=False,
+)
+async def get_public_form_frontend_fallback(request: Request, form_id: UUID) -> HTMLResponse:
+    """
+    Fallback public HTML page for /public/forms/{form_id}.
+
+    This keeps the public link usable even when the reverse proxy still routes
+    /public/forms/... to webapi instead of the frontend SPA.
+    """
+    form = await Managers.user_forms.get_public_form(form_id=form_id)
+    return views.get_public(request, form)
 
 
 @router.get(
