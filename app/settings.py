@@ -82,8 +82,8 @@ However, breaking changes will always be introduced with a version change and/or
     FRONTEND_BASE_URL: str = "http://localhost:8001"
     QRCODE_SERVICE_URL: str = "http://qrcode-generator:8000"
     FORMS_PUBLIC_BASE_URL: str | None = None
-    FORMS_PUBLIC_LOCAL_URL: str = "http://localhost:8000/qliqy/public/forms"
-    FORMS_PUBLIC_DOMAIN_URL: str = "https://qliqy.org/public"
+    FORMS_PUBLIC_LOCAL_URL: str = "http://localhost:8001/public/forms"
+    FORMS_PUBLIC_DOMAIN_URL: str = "https://qliqy.org/public/forms"
     PAGES_PREFIX: str = "qliqy"
     S3_ENDPOINT: str
     S3_BUCKET: str
