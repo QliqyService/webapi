@@ -117,12 +117,12 @@ async def list_all_forms(
 @router.get(
     "/forms/{form_id}",
     status_code=status.HTTP_200_OK,
-    response_model=UserFormSchemaWithoutQrcode,
+    response_model=UserFormSchemaWithQrcode,
 )
 async def get_form(
     form_id: UUID,
     current_user: CurrentUserDepends,
-) -> UserFormSchemaWithoutQrcode:
+) -> UserFormSchemaWithQrcode:
     """
     Retrieve a form by its UUID.
 

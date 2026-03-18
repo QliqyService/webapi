@@ -61,7 +61,7 @@ class UserFormManager:
         return created_form
 
     @staticmethod
-    async def get_form(form_id: UUID, user_id: UUID) -> UserFormSchemaWithoutQrcode:
+    async def get_form(form_id: UUID, user_id: UUID) -> UserFormSchemaWithQrcode:
         form = await UserFormsDb().get(form_id=form_id)
         if not form:
             raise RequestedDataNotFoundException("Form not found")
@@ -69,6 +69,7 @@ class UserFormManager:
         if form.user_id != user_id:
             raise PermissionDeniedException("You have no access to this form")
 
+        form.qrcode = base64.b64encode(form.qrcode or b"").decode("ascii")
         return form
 
     @staticmethod
@@ -111,7 +112,7 @@ class UserFormManager:
         return deleted
 
     @staticmethod
-    async def get_public_form(form_id: UUID) -> UserFormSchemaWithoutQrcode:
+    async def get_public_form(form_id: UUID) -> UserFormSchemaWithQrcode:
         """
         Get public form by ID without access Token.
         """
@@ -119,6 +120,7 @@ class UserFormManager:
         if not form:
             raise RequestedDataNotFoundException("Form not found")
 
+        form.qrcode = base64.b64encode(form.qrcode or b"").decode("ascii")
         return form
 
     @staticmethod

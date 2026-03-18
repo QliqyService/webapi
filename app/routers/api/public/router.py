@@ -5,7 +5,7 @@ from fastapi.responses import StreamingResponse
 
 from app.managers import Managers
 from app.routers.api.base import Router
-from app.schemas.user_forms import UserFormSchemaWithoutQrcode
+from app.schemas.user_forms import UserFormSchemaWithQrcode
 from app.views.public_page import user_forms as views
 
 
@@ -38,11 +38,11 @@ async def get_form_qrcode(form_id: UUID):
 @router.get(
     "/{form_id}",
     status_code=status.HTTP_200_OK,
-    response_model=UserFormSchemaWithoutQrcode,
+    response_model=UserFormSchemaWithQrcode,
 )
 async def get_public_form_page(
     form_id: UUID,
-):
+) -> UserFormSchemaWithQrcode:
     """
     Render a public HTML page for a form.
 
