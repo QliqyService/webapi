@@ -16,6 +16,8 @@ class UserSchema(UUIDModel, CreateUpdateAt):
     first_name: str | None = Field(examples=["John"], default=None)
     last_name: str | None = Field(examples=["Doe"], default=None)
     tg_account: str | None = Field(examples=["@telegram"], default=None)
+    tg_username: str | None = Field(examples=["telegram_username"], default=None)
+    tg_notify_enabled: bool = False
     is_superuser: bool = False
     is_verified: bool = False
     usercode: str | None = Field(examples=["It will be generated"], default=None)
@@ -37,6 +39,8 @@ class UserCreateSchema(BaseModel):
     last_name: str | None = Field(examples=["Doe"], default=None)
     phone: int | None = Field(examples=["9876543210"], default=None)
     tg_account: str | None = Field(examples=["@telegram"], default=None)
+    tg_username: str | None = Field(examples=["telegram_username"], default=None)
+    tg_notify_enabled: bool = False
 
     notify_email_enabled: bool = False
     notify_email: EmailStr | None = None
@@ -53,6 +57,8 @@ class UserUpdateSchema(BaseModel):
     first_name: str | None = Field(examples=["John"], default=None, min_length=2, max_length=64)
     last_name: str | None = Field(examples=["Doe"], default=None, min_length=2, max_length=64)
     tg_account: str | None = Field(examples=["@telegram"], default=None)
+    tg_username: str | None = Field(examples=["telegram_username"], default=None)
+    tg_notify_enabled: bool | None = None
     avatar_key: str | None = None
 
     notify_email_enabled: bool | None = None

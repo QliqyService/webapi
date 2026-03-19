@@ -113,6 +113,8 @@ class UserDepends:
                     first_name=auth_user.first_name,
                     last_name=auth_user.last_name,
                     tg_account=None,
+                    tg_username=None,
+                    tg_notify_enabled=False,
                     is_superuser=auth_user.is_superuser,
                     is_verified=auth_user.is_verified,
                     notify_email_enabled=False,

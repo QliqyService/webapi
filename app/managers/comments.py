@@ -53,7 +53,7 @@ class CommentsManager:
         try:
             queue_name = f"{SETTINGS.APP_STAND}::{ServiceName.TELEGRAM}::comment_created"
 
-            if not owner.tg_account:
+            if not owner.tg_account or not getattr(owner, "tg_notify_enabled", False):
                 LOGGER.info("Telegram was not assigned. Skipping notification. Comment created.")
             else:
                 tg_event = {**common_event, "tg_account": owner.tg_account}
