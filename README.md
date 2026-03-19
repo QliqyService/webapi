@@ -1,6 +1,6 @@
 # Qliqy WebAPI
 
-![CI](https://github.com/ilia2003/Qliqy/actions/workflows/webapi-build.yml/badge.svg)
+![CI](https://github.com/QliqyService/webapi/actions/workflows/webapi-build.yml/badge.svg)
 ![Status](https://img.shields.io/badge/status-active%20development-b4492f)
 ![Access](https://img.shields.io/badge/access-closed%20beta-7e2f1b)
 
