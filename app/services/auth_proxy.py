@@ -174,6 +174,9 @@ class AuthProxyClient:
                         detail=response.text,
                     )
 
+                if response.status_code == status.HTTP_204_NO_CONTENT or not response.content:
+                    return response.status_code, {}
+
                 return response.status_code, response.json()
         except httpx.ConnectError as e:
             LOGGER.error("AuthProxyClient: Failed to connect to auth service")
