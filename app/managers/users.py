@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 
 from fastapi import UploadFile
+from loguru import logger as LOGGER
 
 from app.db.crud import UsersDb
 from app.dependencies.exceptions import ObjectAlreadyExistsException, RequestedDataNotFoundException
@@ -74,6 +75,13 @@ class UsersManager:
             )
 
         updated_user_db = await UsersDb.update(user_id=user_id, user_data=user_data)
+        LOGGER.info(
+            "User notification settings updated user_id={} tg_notify_enabled={} notify_email_enabled={} notify_email={}",
+            user_id,
+            updated_user_db.tg_notify_enabled,
+            updated_user_db.notify_email_enabled,
+            updated_user_db.notify_email,
+        )
         return UserSchema.model_validate(updated_user_db)
 
     @staticmethod

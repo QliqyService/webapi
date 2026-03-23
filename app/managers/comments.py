@@ -28,6 +28,15 @@ class CommentsManager:
             LOGGER.exception("Failed to load owner for notifications")
             return created
 
+        LOGGER.info(
+            "Notification settings resolved user_id={} tg_account={} tg_notify_enabled={} notify_email_enabled={} notify_email={}",
+            owner.id,
+            owner.tg_account,
+            getattr(owner, "tg_notify_enabled", False),
+            getattr(owner, "notify_email_enabled", False),
+            getattr(owner, "notify_email", None),
+        )
+
         base = SETTINGS.FORMS_PUBLIC_DOMAIN_URL
         form_public_url = f"{base}/{form.id}" if base else None
 
